@@ -3,10 +3,7 @@ package com.apiotrowska.flights.passenger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/passenger")
@@ -24,5 +21,15 @@ public class PassengerController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.LOCATION, "/" + createdPassenger.getId())
                 .body(createdPassenger);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Passenger> getPassenger(@PathVariable Long id) {
+        Passenger passenger = this.passengerService.getPassenger(id);
+        if (passenger != null) {
+            return new ResponseEntity<>(passenger, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
