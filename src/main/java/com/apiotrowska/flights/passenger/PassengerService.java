@@ -43,4 +43,8 @@ public class PassengerService {
                 })
                 .orElseGet(() -> passengerRepository.save(passengerNewData));
     }
+
+    public void deletePassenger(Long id) {
+        passengerRepository.deleteById(id);
+    }
 }

@@ -50,4 +50,10 @@ public class PassengerController {
         Passenger updatedPassenger = this.passengerService.updatePassenger(passenger, id);
         return new ResponseEntity<>(updatedPassenger, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deletePassenger(@PathVariable Long id) {
+        this.passengerService.deletePassenger(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
