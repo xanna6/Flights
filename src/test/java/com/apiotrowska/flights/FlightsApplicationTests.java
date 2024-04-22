@@ -3,7 +3,6 @@ package com.apiotrowska.flights;
 import com.apiotrowska.flights.passenger.Passenger;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,10 +80,10 @@ class FlightsApplicationTests {
 		//then
 		Passenger getPassengerResponse = objectMapper.readValue(getPassengerJson, Passenger.class);
 
-		assertThat(response.getFirstname()).isEqualTo("John");
-		assertThat(response.getLastname()).isEqualTo("Smith");
-		assertThat(response.getPhoneNumber()).isEqualTo("123456789");
-		assertThat(response.getEmail()).isEqualTo("johnsmith@mail.com");
+		assertThat(getPassengerResponse.getFirstname()).isEqualTo("John");
+		assertThat(getPassengerResponse.getLastname()).isEqualTo("Smith");
+		assertThat(getPassengerResponse.getPhoneNumber()).isEqualTo("123456789");
+		assertThat(getPassengerResponse.getEmail()).isEqualTo("johnsmith@mail.com");
 	}
 
 	@Test
@@ -138,5 +137,44 @@ class FlightsApplicationTests {
 		assertTrue(getPassengersResponse.contains(response.get(1)));
 		assertTrue(getPassengersResponse.contains(response.get(2)));
 		assertTrue(getPassengersResponse.contains(response.get(3)));
+	}
+
+	@Test
+	public void shouldUpdatePassenger() throws Exception {
+		// given
+		String request = "{\"firstname\":\"John\",\"lastname\":\"Smith\"," +
+				"\"phoneNumber\":\"123456789\",\"email\":\"johnsmith@mail.com\"}";
+
+		String json = mockMvc.perform(post("/passenger").content(request)
+						.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+
+		Passenger response = objectMapper.readValue(json, Passenger.class);
+		Long id = response.getId();
+
+		// when
+		String putRequest = "{\"firstname\":\"Adam\",\"lastname\":\"Brown\"," +
+				"\"phoneNumber\":\"987654321\",\"email\":\"adambrown@mail.com\"}";
+
+		String putPassengerJson = mockMvc.perform(put("/passenger/" + id).content(putRequest)
+						.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
+
+		//then
+		Passenger putPassengerResponse = objectMapper.readValue(putPassengerJson, Passenger.class);
+
+		assertNotEquals(putPassengerResponse.getFirstname(), response.getFirstname());
+		assertNotEquals(putPassengerResponse.getLastname(), response.getLastname());
+		assertNotEquals(putPassengerResponse.getPhoneNumber(), response.getPhoneNumber());
+		assertNotEquals(putPassengerResponse.getEmail(), response.getEmail());
+
+		assertThat(putPassengerResponse.getFirstname()).isEqualTo("Adam");
+		assertThat(putPassengerResponse.getLastname()).isEqualTo("Brown");
+		assertThat(putPassengerResponse.getPhoneNumber()).isEqualTo("987654321");
+		assertThat(putPassengerResponse.getEmail()).isEqualTo("adambrown@mail.com");
 	}
 }

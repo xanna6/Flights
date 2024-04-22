@@ -44,4 +44,10 @@ public class PassengerController {
             return new ResponseEntity<>(passengers, HttpStatus.OK);
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Passenger> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id) {
+        Passenger updatedPassenger = this.passengerService.updatePassenger(passenger, id);
+        return new ResponseEntity<>(updatedPassenger, HttpStatus.OK);
+    }
 }

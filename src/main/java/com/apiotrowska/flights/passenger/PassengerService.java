@@ -31,4 +31,16 @@ public class PassengerService {
     public List<Passenger> getAllPassengers() {
         return passengerRepository.findAll();
     }
+
+    public Passenger updatePassenger(Passenger passengerNewData, Long id) {
+        return passengerRepository.findById(id)
+                .map(passenger -> {
+                    passenger.setFirstname(passengerNewData.getFirstname());
+                    passenger.setLastname(passengerNewData.getLastname());
+                    passenger.setPhoneNumber(passengerNewData.getPhoneNumber());
+                    passenger.setEmail(passengerNewData.getEmail());
+                    return passengerRepository.save(passenger);
+                })
+                .orElseGet(() -> passengerRepository.save(passengerNewData));
+    }
 }
