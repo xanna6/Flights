@@ -1,5 +1,6 @@
 package com.apiotrowska.flights;
 
+import com.apiotrowska.flights.flight.FlightDto;
 import com.apiotrowska.flights.passenger.PassengerDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -201,5 +204,31 @@ class FlightsApplicationTests {
 
         //then
         assertThat(deletePassengerResponse).isEqualTo(204);
+    }
+
+    @Test
+    public void shouldCreateFlight() throws Exception {
+        // given
+        String request = "{\"flightNumber\":\"LO123\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"10:25\"," +
+                "\"allSeats\":100}";
+
+        // when
+        String json = mockMvc.perform(post("/flight").content(request)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        // then
+        FlightDto response = objectMapper.readValue(json, FlightDto.class);
+
+        assertThat(response.getFlightNumber()).isEqualTo("LO123");
+        assertThat(response.getDepartureAirport()).isEqualTo("Warsaw (WAW)");
+        assertThat(response.getArrivalAirport()).isEqualTo("Cracow (KRK)");
+        assertThat(response.getDepartureDate()).isEqualTo(LocalDate.of(2024, 4, 24));
+        assertThat(response.getDepartureTime()).isEqualTo(LocalTime.of(10, 25));
+        assertThat(response.getAllSeats()).isEqualTo(100);
     }
 }

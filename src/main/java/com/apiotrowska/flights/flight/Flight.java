@@ -2,7 +2,10 @@ package com.apiotrowska.flights.flight;
 
 import com.apiotrowska.flights.passenger.Passenger;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.property.access.spi.PropertyAccessSerializationException;
 
 import java.time.LocalDate;
@@ -12,6 +15,9 @@ import java.util.Set;
 
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Flight {
 
     @Id
@@ -23,7 +29,6 @@ public class Flight {
     private LocalDate departureDate;
     private LocalTime departureTime;
     private int allSeats;
-    @Transient
     private int availableSeats;
 
     @ManyToMany(mappedBy = "flightSet")
