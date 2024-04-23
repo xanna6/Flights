@@ -23,6 +23,7 @@ public class Flight {
     private LocalDate departureDate;
     private LocalTime departureTime;
     private int allSeats;
+    @Transient
     private int availableSeats;
 
     @ManyToMany(mappedBy = "flightSet")
