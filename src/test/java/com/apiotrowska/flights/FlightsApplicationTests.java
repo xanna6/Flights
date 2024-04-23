@@ -1,13 +1,12 @@
 package com.apiotrowska.flights;
 
-import com.apiotrowska.flights.passenger.Passenger;
+import com.apiotrowska.flights.passenger.PassengerDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -16,7 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,7 +48,7 @@ class FlightsApplicationTests {
                 .getContentAsString();
 
         // then
-        Passenger response = objectMapper.readValue(json, Passenger.class);
+        PassengerDto response = objectMapper.readValue(json, PassengerDto.class);
 
         assertThat(response.getFirstname()).isEqualTo("John");
         assertThat(response.getLastname()).isEqualTo("Smith");
@@ -68,7 +68,7 @@ class FlightsApplicationTests {
                 .getResponse()
                 .getContentAsString();
 
-        Passenger response = objectMapper.readValue(json, Passenger.class);
+        PassengerDto response = objectMapper.readValue(json, PassengerDto.class);
         Long id = response.getId();
 
         // when
@@ -79,7 +79,7 @@ class FlightsApplicationTests {
                 .getContentAsString();
 
         //then
-        Passenger getPassengerResponse = objectMapper.readValue(getPassengerJson, Passenger.class);
+        PassengerDto getPassengerResponse = objectMapper.readValue(getPassengerJson, PassengerDto.class);
 
         assertThat(getPassengerResponse.getFirstname()).isEqualTo("John");
         assertThat(getPassengerResponse.getLastname()).isEqualTo("Smith");
@@ -104,7 +104,7 @@ class FlightsApplicationTests {
         requestList.add(request3);
         requestList.add(request4);
 
-        List<Passenger> response = new ArrayList<>();
+        List<PassengerDto> response = new ArrayList<>();
 
         requestList.forEach(request -> {
             String json = null;
@@ -118,7 +118,7 @@ class FlightsApplicationTests {
                 exception.printStackTrace();
             }
             try {
-                response.add(objectMapper.readValue(json, Passenger.class));
+                response.add(objectMapper.readValue(json, PassengerDto.class));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
@@ -132,7 +132,7 @@ class FlightsApplicationTests {
                 .getContentAsString();
 
         //then
-        List<Passenger> getPassengersResponse = Arrays.asList(objectMapper.readValue(getPassengersJson, Passenger[].class));
+        List<PassengerDto> getPassengersResponse = Arrays.asList(objectMapper.readValue(getPassengersJson, PassengerDto[].class));
 
         assertTrue(getPassengersResponse.contains(response.get(0)));
         assertTrue(getPassengersResponse.contains(response.get(1)));
@@ -152,7 +152,7 @@ class FlightsApplicationTests {
                 .getResponse()
                 .getContentAsString();
 
-        Passenger response = objectMapper.readValue(json, Passenger.class);
+        PassengerDto response = objectMapper.readValue(json, PassengerDto.class);
         Long id = response.getId();
 
         // when
@@ -166,7 +166,7 @@ class FlightsApplicationTests {
                 .getContentAsString();
 
         //then
-        Passenger putPassengerResponse = objectMapper.readValue(putPassengerJson, Passenger.class);
+        PassengerDto putPassengerResponse = objectMapper.readValue(putPassengerJson, PassengerDto.class);
 
         assertNotEquals(putPassengerResponse.getFirstname(), response.getFirstname());
         assertNotEquals(putPassengerResponse.getLastname(), response.getLastname());
@@ -191,7 +191,7 @@ class FlightsApplicationTests {
                 .getResponse()
                 .getContentAsString();
 
-        Passenger response = objectMapper.readValue(json, Passenger.class);
+        PassengerDto response = objectMapper.readValue(json, PassengerDto.class);
         Long id = response.getId();
 
         // when

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -16,35 +16,47 @@ public class PassengerService {
         this.passengerRepository = passengerRepository;
     }
 
-    public Passenger createPassenger(Passenger passenger) {
+    public PassengerDto createPassenger(Passenger passenger) {
         Passenger savedPassenger = passengerRepository.save(passenger);
         log.info(savedPassenger.toString());
-        return savedPassenger;
+        return mapPassengerToPassengerDto(savedPassenger);
     }
 
-    public Passenger getPassenger(Long id) {
-        Optional<Passenger> optionalPassenger = passengerRepository.findById(id);
-        log.info(optionalPassenger.toString());
-        return optionalPassenger.orElse(null);
+    public PassengerDto getPassenger(Long id) {
+        return this.passengerRepository.findById(id)
+                .map(this::mapPassengerToPassengerDto)
+                .orElseThrow(() -> new PassengerNotFoundException("Passenger with id = " + id + " not found"));
     }
 
-    public List<Passenger> getAllPassengers() {
-        return passengerRepository.findAll();
+    public List<PassengerDto> getAllPassengers() {
+        return passengerRepository.findAll().stream().map(this::mapPassengerToPassengerDto)
+                .collect(Collectors.toList());
     }
 
-    public Passenger updatePassenger(Passenger passengerNewData, Long id) {
+    public PassengerDto updatePassenger(Passenger passengerNewData, Long id) {
         return passengerRepository.findById(id)
                 .map(passenger -> {
                     passenger.setFirstname(passengerNewData.getFirstname());
                     passenger.setLastname(passengerNewData.getLastname());
                     passenger.setPhoneNumber(passengerNewData.getPhoneNumber());
                     passenger.setEmail(passengerNewData.getEmail());
-                    return passengerRepository.save(passenger);
+                    passenger = passengerRepository.save(passenger);
+                    return mapPassengerToPassengerDto(passenger);
                 })
-                .orElseGet(() -> passengerRepository.save(passengerNewData));
+                .orElseGet(() -> mapPassengerToPassengerDto(passengerRepository.save(passengerNewData)));
     }
 
     public void deletePassenger(Long id) {
         passengerRepository.deleteById(id);
+    }
+
+    private PassengerDto mapPassengerToPassengerDto(Passenger passenger) {
+        return PassengerDto.builder()
+                .id(passenger.getId())
+                .firstname(passenger.getFirstname())
+                .lastname(passenger.getLastname())
+                .phoneNumber(passenger.getPhoneNumber())
+                .email(passenger.getEmail())
+                .build();
     }
 }

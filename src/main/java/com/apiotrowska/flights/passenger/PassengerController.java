@@ -18,16 +18,16 @@ public class PassengerController {
     }
 
     @PostMapping
-    public ResponseEntity<Passenger> createPassenger(@RequestBody Passenger passenger) {
-        Passenger createdPassenger = this.passengerService.createPassenger(passenger);
+    public ResponseEntity<PassengerDto> createPassenger(@RequestBody Passenger passenger) {
+        PassengerDto createdPassenger = this.passengerService.createPassenger(passenger);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.LOCATION, "/" + createdPassenger.getId())
                 .body(createdPassenger);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Passenger> getPassenger(@PathVariable Long id) {
-        Passenger passenger = this.passengerService.getPassenger(id);
+    public ResponseEntity<PassengerDto> getPassenger(@PathVariable Long id) {
+        PassengerDto passenger = this.passengerService.getPassenger(id);
         if (passenger != null) {
             return new ResponseEntity<>(passenger, HttpStatus.OK);
         } else {
@@ -36,8 +36,8 @@ public class PassengerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Passenger>> getPassengers() {
-        List<Passenger> passengers = this.passengerService.getAllPassengers();
+    public ResponseEntity<List<PassengerDto>> getPassengers() {
+        List<PassengerDto> passengers = this.passengerService.getAllPassengers();
         if (passengers.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
@@ -46,8 +46,8 @@ public class PassengerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Passenger> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id) {
-        Passenger updatedPassenger = this.passengerService.updatePassenger(passenger, id);
+    public ResponseEntity<PassengerDto> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id) {
+        PassengerDto updatedPassenger = this.passengerService.updatePassenger(passenger, id);
         return new ResponseEntity<>(updatedPassenger, HttpStatus.OK);
     }
 
