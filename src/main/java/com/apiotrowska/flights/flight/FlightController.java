@@ -1,12 +1,10 @@
 package com.apiotrowska.flights.flight;
 
+import com.apiotrowska.flights.passenger.PassengerDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/flight")
@@ -24,5 +22,11 @@ public class FlightController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.LOCATION, "/" + createdFlight.getId())
                 .body(createdFlight);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<FlightDto> getFLight(@PathVariable Long id) {
+        FlightDto flightDto = this.flightService.getFlight(id);
+        return new ResponseEntity<>(flightDto, HttpStatus.OK);
     }
 }

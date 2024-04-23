@@ -1,5 +1,6 @@
 package com.apiotrowska.flights.flight;
 
+import com.apiotrowska.flights.passenger.PassengerNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,12 @@ public class FlightService {
             log.info(savedFlight.toString());
             return mapFlightToFlightDto(savedFlight);
 
+    }
+
+    public FlightDto getFlight(Long id) {
+        return this.flightRepository.findById(id)
+                .map(this::mapFlightToFlightDto)
+                .orElseThrow(() -> new FlightNotFoundException("Flight with id = " + id + " not found"));
     }
 
     private FlightDto mapFlightToFlightDto(Flight flight) {

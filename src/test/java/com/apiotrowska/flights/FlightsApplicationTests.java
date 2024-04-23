@@ -231,4 +231,38 @@ class FlightsApplicationTests {
         assertThat(response.getDepartureTime()).isEqualTo(LocalTime.of(10, 25));
         assertThat(response.getAllSeats()).isEqualTo(100);
     }
+
+    @Test
+    public void shouldReturnFlight() throws Exception {
+        // given
+        String request = "{\"flightNumber\":\"LO123\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"10:25\"," +
+                "\"allSeats\":100}";
+
+        String json = mockMvc.perform(post("/flight").content(request)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        FlightDto response = objectMapper.readValue(json, FlightDto.class);
+        Long id = response.getId();
+
+        // when
+        String getFlightJson = mockMvc.perform(get("/flight/" + id)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //then
+        FlightDto getFlightResponse = objectMapper.readValue(getFlightJson, FlightDto.class);
+
+        assertThat(getFlightResponse.getFlightNumber()).isEqualTo("LO123");
+        assertThat(getFlightResponse.getDepartureAirport()).isEqualTo("Warsaw (WAW)");
+        assertThat(getFlightResponse.getArrivalAirport()).isEqualTo("Cracow (KRK)");
+        assertThat(getFlightResponse.getDepartureDate()).isEqualTo(LocalDate.of(2024, 4, 24));
+        assertThat(getFlightResponse.getDepartureTime()).isEqualTo(LocalTime.of(10, 25));
+        assertThat(getFlightResponse.getAllSeats()).isEqualTo(100);
+    }
 }
