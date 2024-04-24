@@ -1,6 +1,7 @@
 package com.apiotrowska.flights;
 
 import com.apiotrowska.flights.flight.FlightDto;
+import com.apiotrowska.flights.flight.filter.FlightFilter;
 import com.apiotrowska.flights.passenger.PassengerDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,8 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -264,5 +264,125 @@ class FlightsApplicationTests {
         assertThat(getFlightResponse.getDepartureDate()).isEqualTo(LocalDate.of(2024, 4, 24));
         assertThat(getFlightResponse.getDepartureTime()).isEqualTo(LocalTime.of(10, 25));
         assertThat(getFlightResponse.getAllSeats()).isEqualTo(100);
+    }
+
+    @Test
+    public void shouldReturnFlights() throws Exception {
+        // given
+        String request1 = "{\"flightNumber\":\"LO111\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"10:25\"," +
+                "\"allSeats\":100}";
+        String request2 = "{\"flightNumber\":\"LO222\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Poznan (PZN)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"17:20\"," +
+                "\"allSeats\":150}";
+        String request3 = "{\"flightNumber\":\"LO333\",\"departureAirport\":\"Cracow (KRK)\"," +
+                "\"arrivalAirport\":\"Warsaw (WAW)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"19:00\"," +
+                "\"allSeats\":150}";
+        String request4 = "{\"flightNumber\":\"LO111\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-25\",\"departureTime\":\"21:45\"," +
+                "\"allSeats\":120}";
+        List<String> requestList = new ArrayList<>();
+        requestList.add(request1);
+        requestList.add(request2);
+        requestList.add(request3);
+        requestList.add(request4);
+
+        List<FlightDto> response = new ArrayList<>();
+
+        requestList.forEach(request -> {
+            String json = null;
+            try {
+                json = mockMvc.perform(post("/flight").content(request)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+            try {
+                response.add(objectMapper.readValue(json, FlightDto.class));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
+
+        // when
+        String getFlightsJson = mockMvc.perform(get("/flight")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //then
+        List<FlightDto> getFlightsResponse = Arrays.asList(objectMapper.readValue(getFlightsJson, FlightDto[].class));
+
+        assertTrue(getFlightsResponse.contains(response.get(0)));
+        assertTrue(getFlightsResponse.contains(response.get(1)));
+        assertTrue(getFlightsResponse.contains(response.get(2)));
+        assertTrue(getFlightsResponse.contains(response.get(3)));
+    }
+
+    @Test
+    public void shouldReturnFilteredFlights() throws Exception {
+        // given
+        String request1 = "{\"flightNumber\":\"LO111\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"10:25\"," +
+                "\"allSeats\":100}";
+        String request2 = "{\"flightNumber\":\"LO222\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Poznan (PZN)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"17:20\"," +
+                "\"allSeats\":150}";
+        String request3 = "{\"flightNumber\":\"LO333\",\"departureAirport\":\"Cracow (KRK)\"," +
+                "\"arrivalAirport\":\"Warsaw (WAW)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"19:00\"," +
+                "\"allSeats\":150}";
+        String request4 = "{\"flightNumber\":\"LO111\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-25\",\"departureTime\":\"21:45\"," +
+                "\"allSeats\":120}";
+        List<String> requestList = new ArrayList<>();
+        requestList.add(request1);
+        requestList.add(request2);
+        requestList.add(request3);
+        requestList.add(request4);
+
+        List<FlightDto> response = new ArrayList<>();
+
+        requestList.forEach(request -> {
+            String json = null;
+            try {
+                json = mockMvc.perform(post("/flight").content(request)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+            try {
+                response.add(objectMapper.readValue(json, FlightDto.class));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
+
+        FlightFilter filter1 = new FlightFilter("departureDate",LocalDate.of(2024,04,24));
+        FlightFilter filter2 = new FlightFilter("availableSeats", 125);
+        // when
+        String getFlightsJson = mockMvc.perform(get("/flight")
+                        .param("flightFilterList[0].filterKey", filter1.getFilterKey())
+                        .param("flightFilterList[0].value", filter1.getValue().toString())
+                        .param("flightFilterList[1].filterKey", filter2.getFilterKey())
+                        .param("flightFilterList[1].value", filter2.getValue().toString())
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //then
+        List<FlightDto> getFlightsResponse = Arrays.asList(objectMapper.readValue(getFlightsJson, FlightDto[].class));
+
+        assertFalse(getFlightsResponse.contains(response.get(0)));
+        assertTrue(getFlightsResponse.contains(response.get(1)));
+        assertTrue(getFlightsResponse.contains(response.get(2)));
+        assertFalse(getFlightsResponse.contains(response.get(3)));
     }
 }

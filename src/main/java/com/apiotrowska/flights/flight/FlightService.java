@@ -1,8 +1,12 @@
 package com.apiotrowska.flights.flight;
 
-import com.apiotrowska.flights.passenger.PassengerNotFoundException;
+import com.apiotrowska.flights.flight.filter.FlightFilter;
+import com.apiotrowska.flights.flight.filter.FlightSpecificationBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -36,8 +40,14 @@ public class FlightService {
                 .orElseThrow(() -> new FlightNotFoundException("Flight with id = " + id + " not found"));
     }
 
+    public List<FlightDto> getAllFlights(List<FlightFilter> flightFliterList) {
+        FlightSpecificationBuilder specificationBuilder = new FlightSpecificationBuilder(flightFliterList);
+        System.out.println(specificationBuilder.build());
+        return flightRepository.findAll(specificationBuilder.build()).stream().map(this::mapFlightToFlightDto)
+                .collect(Collectors.toList());
+    }
+
     private FlightDto mapFlightToFlightDto(Flight flight) {
-        System.out.println("seats: " + flight.getAvailableSeats());
         return FlightDto.builder()
                 .id(flight.getId())
                 .flightNumber(flight.getFlightNumber())

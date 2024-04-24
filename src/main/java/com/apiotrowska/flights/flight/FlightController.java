@@ -1,10 +1,12 @@
 package com.apiotrowska.flights.flight;
 
-import com.apiotrowska.flights.passenger.PassengerDto;
+import com.apiotrowska.flights.flight.filter.FlightFilters;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/flight")
@@ -28,5 +30,15 @@ public class FlightController {
     public ResponseEntity<FlightDto> getFLight(@PathVariable Long id) {
         FlightDto flightDto = this.flightService.getFlight(id);
         return new ResponseEntity<>(flightDto, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<FlightDto>> getFLights(@ModelAttribute FlightFilters flightFilters) {
+        List<FlightDto> flights = this.flightService.getAllFlights(flightFilters.getFlightFilterList());
+        if (flights.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(flights, HttpStatus.OK);
+        }
     }
 }
