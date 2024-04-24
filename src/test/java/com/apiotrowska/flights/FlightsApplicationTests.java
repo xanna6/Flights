@@ -385,4 +385,43 @@ class FlightsApplicationTests {
         assertTrue(getFlightsResponse.contains(response.get(2)));
         assertFalse(getFlightsResponse.contains(response.get(3)));
     }
+
+    @Test
+    public void shouldUpdateFlight() throws Exception {
+        // given
+        String request = "{\"flightNumber\":\"LO111\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"10:25\"," +
+                "\"allSeats\":100}";
+
+        String json = mockMvc.perform(post("/flight").content(request)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        FlightDto response = objectMapper.readValue(json, FlightDto.class);
+        Long id = response.getId();
+
+        // when
+        String putRequest = "{\"departureDate\":\"2024-04-26\",\"departureTime\":\"16:00\"}";
+
+        String putFlightJson = mockMvc.perform(put("/flight/" + id).content(putRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //then
+        FlightDto putFlightResponse = objectMapper.readValue(putFlightJson, FlightDto.class);
+
+        assertNotEquals(putFlightResponse.getDepartureDate(), response.getDepartureDate());
+        assertNotEquals(putFlightResponse.getDepartureTime(), response.getDepartureTime());
+
+        assertThat(putFlightResponse.getFlightNumber()).isEqualTo("LO111");
+        assertThat(putFlightResponse.getDepartureAirport()).isEqualTo("Warsaw (WAW)");
+        assertThat(putFlightResponse.getArrivalAirport()).isEqualTo("Cracow (KRK)");
+        assertThat(putFlightResponse.getDepartureDate()).isEqualTo(LocalDate.of(2024,4,26));
+        assertThat(putFlightResponse.getDepartureTime()).isEqualTo(LocalTime.of(16,0));
+        assertThat(putFlightResponse.getAllSeats()).isEqualTo(100);
+    }
 }

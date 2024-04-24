@@ -47,6 +47,30 @@ public class FlightService {
                 .collect(Collectors.toList());
     }
 
+    public FlightDto updateFlight(FlightDto flightDto, Long id) {
+        return flightRepository.findById(id)
+                .map(flight -> {
+                    if (flightDto.getFlightNumber() != null) {
+                        flight.setFlightNumber(flightDto.getFlightNumber());
+                    }
+                    if (flightDto.getDepartureAirport() != null) {
+                        flight.setDepartureAirport(flightDto.getDepartureAirport());
+                    }
+                    if (flightDto.getArrivalAirport() != null) {
+                        flight.setArrivalAirport(flightDto.getArrivalAirport());
+                    }
+                    if (flightDto.getDepartureDate() != null) {
+                        flight.setDepartureDate(flightDto.getDepartureDate());
+                    }
+                    if (flightDto.getDepartureTime() != null) {
+                        flight.setDepartureTime(flightDto.getDepartureTime());
+                    }
+                    flight = flightRepository.save(flight);
+                    return mapFlightToFlightDto(flight);
+                })
+                .orElseGet(() -> createFLight(flightDto));
+    }
+
     private FlightDto mapFlightToFlightDto(Flight flight) {
         return FlightDto.builder()
                 .id(flight.getId())
