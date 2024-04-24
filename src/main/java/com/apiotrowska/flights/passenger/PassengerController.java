@@ -18,8 +18,8 @@ public class PassengerController {
     }
 
     @PostMapping
-    public ResponseEntity<PassengerDto> createPassenger(@RequestBody Passenger passenger) {
-        PassengerDto createdPassenger = this.passengerService.createPassenger(passenger);
+    public ResponseEntity<PassengerDto> createPassenger(@RequestBody PassengerDto passengerDto) {
+        PassengerDto createdPassenger = this.passengerService.createPassenger(passengerDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.LOCATION, "/" + createdPassenger.getId())
                 .body(createdPassenger);
@@ -28,11 +28,7 @@ public class PassengerController {
     @GetMapping("/{id}")
     public ResponseEntity<PassengerDto> getPassenger(@PathVariable Long id) {
         PassengerDto passenger = this.passengerService.getPassenger(id);
-        if (passenger != null) {
-            return new ResponseEntity<>(passenger, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(passenger, HttpStatus.OK);
     }
 
     @GetMapping
@@ -46,8 +42,8 @@ public class PassengerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PassengerDto> updatePassenger(@RequestBody Passenger passenger, @PathVariable Long id) {
-        PassengerDto updatedPassenger = this.passengerService.updatePassenger(passenger, id);
+    public ResponseEntity<PassengerDto> updatePassenger(@RequestBody PassengerDto passengerDto, @PathVariable Long id) {
+        PassengerDto updatedPassenger = this.passengerService.updatePassenger(passengerDto, id);
         return new ResponseEntity<>(updatedPassenger, HttpStatus.OK);
     }
 

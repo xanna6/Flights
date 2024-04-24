@@ -16,7 +16,14 @@ public class PassengerService {
         this.passengerRepository = passengerRepository;
     }
 
-    public PassengerDto createPassenger(Passenger passenger) {
+    public PassengerDto createPassenger(PassengerDto passengerDto) {
+        Passenger passenger = Passenger.builder()
+                .id(passengerDto.getId())
+                .firstname(passengerDto.getFirstname())
+                .lastname(passengerDto.getLastname())
+                .phoneNumber(passengerDto.getPhoneNumber())
+                .email(passengerDto.getEmail())
+                .build();
         Passenger savedPassenger = passengerRepository.save(passenger);
         log.info(savedPassenger.toString());
         return mapPassengerToPassengerDto(savedPassenger);
@@ -33,7 +40,7 @@ public class PassengerService {
                 .collect(Collectors.toList());
     }
 
-    public PassengerDto updatePassenger(Passenger passengerNewData, Long id) {
+    public PassengerDto updatePassenger(PassengerDto passengerNewData, Long id) {
         return passengerRepository.findById(id)
                 .map(passenger -> {
                     passenger.setFirstname(passengerNewData.getFirstname());
@@ -43,7 +50,7 @@ public class PassengerService {
                     passenger = passengerRepository.save(passenger);
                     return mapPassengerToPassengerDto(passenger);
                 })
-                .orElseGet(() -> mapPassengerToPassengerDto(passengerRepository.save(passengerNewData)));
+                .orElseGet(() -> createPassenger(passengerNewData));
     }
 
     public void deletePassenger(Long id) {
