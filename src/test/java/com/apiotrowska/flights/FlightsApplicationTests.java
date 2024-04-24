@@ -424,4 +424,29 @@ class FlightsApplicationTests {
         assertThat(putFlightResponse.getDepartureTime()).isEqualTo(LocalTime.of(16,0));
         assertThat(putFlightResponse.getAllSeats()).isEqualTo(100);
     }
+
+    @Test
+    public void shouldDeleteFlight() throws Exception {
+        // given
+        String request = "{\"flightNumber\":\"LO111\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"10:25\"," +
+                "\"allSeats\":100}";
+
+        String json = mockMvc.perform(post("/flight").content(request)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        FlightDto response = objectMapper.readValue(json, FlightDto.class);
+        Long id = response.getId();
+
+        // when
+        int deleteFlightResponse = mockMvc.perform(delete("/flight/" + id)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn().getResponse().getStatus();
+
+        //then
+        assertThat(deleteFlightResponse).isEqualTo(204);
+    }
 }

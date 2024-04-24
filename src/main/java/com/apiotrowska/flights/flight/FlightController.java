@@ -47,4 +47,10 @@ public class FlightController {
         FlightDto updatedFlight = this.flightService.updateFlight(flightDto, id);
         return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteFlight(@PathVariable Long id) {
+        this.flightService.deleteFlight(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }

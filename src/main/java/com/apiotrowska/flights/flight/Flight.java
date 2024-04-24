@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.property.access.spi.PropertyAccessSerializationException;
 
 import java.time.LocalDate;
@@ -32,5 +34,6 @@ public class Flight {
     private int availableSeats;
 
     @ManyToMany(mappedBy = "flightSet")
+    @OnDelete(action = OnDeleteAction.CASCADE)
    private Set<Passenger> passengerSet = new HashSet<>();
 }

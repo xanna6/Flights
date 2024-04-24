@@ -2,8 +2,10 @@ package com.apiotrowska.flights.flight;
 
 import com.apiotrowska.flights.flight.filter.FlightFilter;
 import com.apiotrowska.flights.flight.filter.FlightSpecificationBuilder;
+import com.apiotrowska.flights.passenger.PassengerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,9 +15,11 @@ import java.util.stream.Collectors;
 public class FlightService {
 
     private final FlightRepository flightRepository;
+    private final PassengerRepository passengerRepository;
 
-    public FlightService(FlightRepository flightRepository) {
+    public FlightService(FlightRepository flightRepository, PassengerRepository passengerRepository) {
         this.flightRepository = flightRepository;
+        this.passengerRepository = passengerRepository;
     }
 
     public FlightDto createFLight(FlightDto flightDto) {
@@ -28,9 +32,9 @@ public class FlightService {
                 .allSeats(flightDto.getAllSeats())
                 .availableSeats(flightDto.getAllSeats())
                 .build();
-            Flight savedFlight = flightRepository.save(flight);
-            log.info(savedFlight.toString());
-            return mapFlightToFlightDto(savedFlight);
+        Flight savedFlight = flightRepository.save(flight);
+        log.info(savedFlight.toString());
+        return mapFlightToFlightDto(savedFlight);
 
     }
 
@@ -82,5 +86,10 @@ public class FlightService {
                 .allSeats(flight.getAllSeats())
                 .availableSeats(flight.getAvailableSeats())
                 .build();
+    }
+
+    @Transactional
+    public void deleteFlight(Long id) {
+        flightRepository.deleteById(id);
     }
 }
