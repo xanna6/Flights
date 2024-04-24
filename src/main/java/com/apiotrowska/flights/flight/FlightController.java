@@ -1,6 +1,7 @@
 package com.apiotrowska.flights.flight;
 
 import com.apiotrowska.flights.flight.filter.FlightFilters;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class FlightController {
     }
 
     @PostMapping
-    public ResponseEntity<FlightDto> createFlight(@RequestBody FlightDto flightDto) {
+    public ResponseEntity<FlightDto> createFlight(@Valid @RequestBody FlightDto flightDto) {
         FlightDto createdFlight = this.flightService.createFLight(flightDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.LOCATION, "/" + createdFlight.getId())
@@ -43,7 +44,7 @@ public class FlightController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FlightDto> updateFlight(@RequestBody FlightDto flightDto, @PathVariable Long id) {
+    public ResponseEntity<FlightDto> updateFlight(@Valid @RequestBody FlightDto flightDto, @PathVariable Long id) {
         FlightDto updatedFlight = this.flightService.updateFlight(flightDto, id);
         return new ResponseEntity<>(updatedFlight, HttpStatus.OK);
     }

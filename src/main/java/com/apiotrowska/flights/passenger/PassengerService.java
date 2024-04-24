@@ -1,5 +1,6 @@
 package com.apiotrowska.flights.passenger;
 
+import com.apiotrowska.flights.exception.PassengerNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

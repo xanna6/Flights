@@ -1,9 +1,11 @@
 package com.apiotrowska.flights.flight;
 
+import com.apiotrowska.flights.exception.CannotAssignPassengerToFlightException;
+import com.apiotrowska.flights.exception.FlightNotFoundException;
 import com.apiotrowska.flights.flight.filter.FlightFilter;
 import com.apiotrowska.flights.flight.filter.FlightSpecificationBuilder;
 import com.apiotrowska.flights.passenger.Passenger;
-import com.apiotrowska.flights.passenger.PassengerNotFoundException;
+import com.apiotrowska.flights.exception.PassengerNotFoundException;
 import com.apiotrowska.flights.passenger.PassengerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

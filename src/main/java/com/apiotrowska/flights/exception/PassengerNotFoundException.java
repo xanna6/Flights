@@ -1,4 +1,4 @@
-package com.apiotrowska.flights.passenger;
+package com.apiotrowska.flights.exception;
 
 public class PassengerNotFoundException extends RuntimeException {
 

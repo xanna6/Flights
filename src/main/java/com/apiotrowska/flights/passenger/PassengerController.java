@@ -1,5 +1,6 @@
 package com.apiotrowska.flights.passenger;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class PassengerController {
     }
 
     @PostMapping
-    public ResponseEntity<PassengerDto> createPassenger(@RequestBody PassengerDto passengerDto) {
+    public ResponseEntity<PassengerDto> createPassenger(@Valid @RequestBody PassengerDto passengerDto) {
         PassengerDto createdPassenger = this.passengerService.createPassenger(passengerDto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.LOCATION, "/" + createdPassenger.getId())
@@ -42,7 +43,7 @@ public class PassengerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PassengerDto> updatePassenger(@RequestBody PassengerDto passengerDto, @PathVariable Long id) {
+    public ResponseEntity<PassengerDto> updatePassenger(@Valid @RequestBody PassengerDto passengerDto, @PathVariable Long id) {
         PassengerDto updatedPassenger = this.passengerService.updatePassenger(passengerDto, id);
         return new ResponseEntity<>(updatedPassenger, HttpStatus.OK);
     }

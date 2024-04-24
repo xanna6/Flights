@@ -1,4 +1,4 @@
-package com.apiotrowska.flights.flight;
+package com.apiotrowska.flights.exception;
 
 public class FlightNotFoundException extends RuntimeException {
 
