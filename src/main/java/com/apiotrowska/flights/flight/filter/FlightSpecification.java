@@ -1,6 +1,7 @@
 package com.apiotrowska.flights.flight.filter;
 
 import com.apiotrowska.flights.flight.Flight;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -21,7 +22,7 @@ public class FlightSpecification implements Specification<Flight> {
     }
 
     @Override
-    public Predicate toPredicate(Root<Flight> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+    public Predicate toPredicate(Root<Flight> root, @Nonnull CriteriaQuery<?> query, @Nonnull CriteriaBuilder criteriaBuilder) {
         if (root.get(flightFilter.getFilterKey()).getJavaType() == LocalDate.class) {
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             try {

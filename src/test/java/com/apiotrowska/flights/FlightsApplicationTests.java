@@ -364,7 +364,7 @@ class FlightsApplicationTests {
             }
         });
 
-        FlightFilter filter1 = new FlightFilter("departureDate",LocalDate.of(2024,04,24));
+        FlightFilter filter1 = new FlightFilter("departureDate",LocalDate.of(2024,4,24));
         FlightFilter filter2 = new FlightFilter("availableSeats", 125);
         // when
         String getFlightsJson = mockMvc.perform(get("/flight")

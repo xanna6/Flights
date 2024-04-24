@@ -26,29 +26,32 @@ public class ControllerExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> handleDateTimeParseException(HttpMessageNotReadableException e) {
-        Map<String, String> errors = new HashMap<>();
-        errors.put("error", e.getLocalizedMessage());
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<FlightsError> handleDateTimeParseException(HttpMessageNotReadableException e) {
+        FlightsError error = new FlightsError(HttpStatus.BAD_REQUEST + " : " + e.getLocalizedMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PassengerNotFoundException.class)
-    public ResponseEntity handlePassengerNotFoundException(PassengerNotFoundException e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<FlightsError> handlePassengerNotFoundException(PassengerNotFoundException e) {
+        FlightsError error = new FlightsError(HttpStatus.NOT_FOUND + " : " + e.getLocalizedMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(FlightNotFoundException.class)
-    public ResponseEntity handleFlightNotFoundException(FlightNotFoundException e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<FlightsError> handleFlightNotFoundException(FlightNotFoundException e) {
+        FlightsError error = new FlightsError(HttpStatus.NOT_FOUND + " : " + e.getLocalizedMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CannotAssignPassengerToFlightException.class)
-    public ResponseEntity handleCannotAssignPassengerToFlightException(CannotAssignPassengerToFlightException e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<FlightsError> handleCannotAssignPassengerToFlightException(CannotAssignPassengerToFlightException e) {
+        FlightsError error = new FlightsError(HttpStatus.BAD_REQUEST + " : " + e.getLocalizedMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity handleGlobalException(Exception e) {
-        return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<FlightsError> handleGlobalException(Exception e) {
+        FlightsError error = new FlightsError(HttpStatus.INTERNAL_SERVER_ERROR + " : " + e.getLocalizedMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

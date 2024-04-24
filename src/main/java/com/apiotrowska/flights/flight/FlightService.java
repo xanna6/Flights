@@ -51,7 +51,6 @@ public class FlightService {
 
     public List<FlightDto> getAllFlights(List<FlightFilter> flightFliterList) {
         FlightSpecificationBuilder specificationBuilder = new FlightSpecificationBuilder(flightFliterList);
-        System.out.println(specificationBuilder.build());
         return flightRepository.findAll(specificationBuilder.build()).stream().map(this::mapFlightToFlightDto)
                 .collect(Collectors.toList());
     }
@@ -124,7 +123,6 @@ public class FlightService {
         Flight flight = optionalFlight.get();
 
         boolean removed = flight.getPassengerSet().remove(passenger);
-        System.out.println(removed);
         if (removed) {
             flight.setAvailableSeats(flight.getAvailableSeats() + 1);
             flight = flightRepository.save(flight);
