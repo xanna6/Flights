@@ -33,7 +33,12 @@ public class Flight {
     private int allSeats;
     private int availableSeats;
 
-    @ManyToMany(mappedBy = "flightSet")
+    @ManyToMany
+    @JoinTable(
+            name = "flight_passenger",
+            joinColumns = @JoinColumn(name = "flight_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id")
+    )
     @OnDelete(action = OnDeleteAction.CASCADE)
    private Set<Passenger> passengerSet = new HashSet<>();
 }

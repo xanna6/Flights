@@ -27,12 +27,7 @@ public class Passenger {
     private String phoneNumber;
     private String email;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "passengerSet")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinTable(
-            name = "flight_passenger",
-            joinColumns = @JoinColumn(name = "passenger_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "flight_id", referencedColumnName = "id")
-    )
     private Set<Flight> flightSet = new HashSet<>();
 }

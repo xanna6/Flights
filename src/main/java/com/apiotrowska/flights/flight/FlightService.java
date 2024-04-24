@@ -2,12 +2,15 @@ package com.apiotrowska.flights.flight;
 
 import com.apiotrowska.flights.flight.filter.FlightFilter;
 import com.apiotrowska.flights.flight.filter.FlightSpecificationBuilder;
+import com.apiotrowska.flights.passenger.Passenger;
+import com.apiotrowska.flights.passenger.PassengerNotFoundException;
 import com.apiotrowska.flights.passenger.PassengerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,6 +78,35 @@ public class FlightService {
                 .orElseGet(() -> createFLight(flightDto));
     }
 
+    public void deleteFlight(Long id) {
+        flightRepository.deleteById(id);
+    }
+
+    @Transactional
+    public FlightDto assignPassengerToFlight(Long flightId, Long passengerId) {
+        Optional<Passenger> optionalPassenger =  passengerRepository.findById(passengerId);
+        Optional<Flight> optionalFlight =  flightRepository.findById(flightId);
+
+        if (optionalPassenger.isEmpty()) {
+            throw new PassengerNotFoundException("Passenger with id = " + passengerId + " not found");
+        }
+        if (optionalFlight.isEmpty()) {
+            throw new FlightNotFoundException("Flight with id = " + flightId + " not found");
+        }
+
+        Passenger passenger = optionalPassenger.get();
+        Flight flight = optionalFlight.get();
+
+        if (flight.getAvailableSeats() == 0) {
+            throw new CannotAssignPassengerToFlightException("Cannot assign passenger with id = " + passengerId +
+                    " to flight with id = " + flightId + ". No available seats.");
+        }
+        flight.getPassengerSet().add(passenger);
+        flight.setAvailableSeats(flight.getAvailableSeats() - 1);
+        flight = flightRepository.save(flight);
+        return mapFlightToFlightDto(flight);
+    }
+
     private FlightDto mapFlightToFlightDto(Flight flight) {
         return FlightDto.builder()
                 .id(flight.getId())
@@ -86,10 +118,5 @@ public class FlightService {
                 .allSeats(flight.getAllSeats())
                 .availableSeats(flight.getAvailableSeats())
                 .build();
-    }
-
-    @Transactional
-    public void deleteFlight(Long id) {
-        flightRepository.deleteById(id);
     }
 }
