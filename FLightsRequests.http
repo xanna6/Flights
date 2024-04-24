@@ -1,0 +1,97 @@
+# create new passenger
+POST http://localhost:8080/passenger
+Content-Type: application/json
+
+{
+	"firstname": "Anna",
+    "lastname": "Piotrowska",
+    "phoneNumber": "123456789",
+    "email": "mail@mail.com"
+}
+
+###
+# get passenger data
+GET http://localhost:8080/passenger/2
+Accept: application/json
+
+###
+# get list of all passengers
+GET http://localhost:8080/passenger
+Accept: application/json
+
+###
+# get list of flights
+GET http://localhost:8080/flight
+Accept: application/json
+
+###
+# get filtered list of flights
+#filters should be passed as list of FLightFilter, which has 2 fields - filterKey and Value
+GET http://localhost:8080/flight?flightFilterList%5B0%5D.filterKey=departureDate&flightFilterList%5B0%5D.value=2024-04-26&flightFilterList%5B1%5D.filterKey=arrivalAirport&flightFilterList%5B1%5D.value=Warsaw
+Accept: application/json
+
+###
+# create new flight
+POST http://localhost:8080/flight
+Content-Type: application/json
+
+{
+	"flightNumber": "LO9999",
+    "departureAirport": "Warsaw (WAW)",
+    "arrivalAirport": "Barcelona (BCN)",
+    "departureDate": "2024-05-01",
+    "departureTime": "12:00",
+    "allSeats": 200
+}
+
+###
+# get flight data
+GET http://localhost:8080/flight/1
+Accept: application/json
+
+###
+# assign passenger to flight
+PUT http://localhost:8080/flight/1/passenger/2
+Accept: application/json
+
+###
+# remove passenger from flight
+DELETE http://localhost:8080/flight/1/passenger/2
+Accept: application/json
+
+###
+# updating flight data
+PUT http://localhost:8080/flight/1
+Content-Type: application/json
+
+{
+  "flightNumber": "LO123",
+  "departureAirport": "Warsaw (WAW)",
+  "arrivalAirport": "Barcelona (BCN)",
+  "departureDate": "2024-05-10",
+  "departureTime": "20:00",
+  "allSeats": 200
+}
+
+###
+# updating passenger data
+PUT http://localhost:8080/passenger/2
+Content-Type: application/json
+
+{
+  "firstname": "Adam",
+  "lastname": "Piotrowska",
+  "phoneNumber": "987654321",
+  "email": "newmail@mail.com"
+}
+
+###
+# deleting a flight
+DELETE http://localhost:8080/flight/2
+Accept: application/json
+
+###
+# deleting a passenger
+DELETE http://localhost:8080/passenger/3
+Accept: application/json
+
