@@ -2,17 +2,14 @@ package com.apiotrowska.flights.flight;
 
 import com.apiotrowska.flights.passenger.Passenger;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.property.access.spi.PropertyAccessSerializationException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -41,4 +38,21 @@ public class Flight {
     )
     @OnDelete(action = OnDeleteAction.CASCADE)
    private Set<Passenger> passengerSet = new HashSet<>();
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Flight other = (Flight) obj;
+        return Objects.equals(id, other.getId());
+    }
 }

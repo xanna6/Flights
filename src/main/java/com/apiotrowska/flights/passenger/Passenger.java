@@ -2,14 +2,12 @@ package com.apiotrowska.flights.passenger;
 
 import com.apiotrowska.flights.flight.Flight;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -30,4 +28,21 @@ public class Passenger {
     @ManyToMany(mappedBy = "passengerSet")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Flight> flightSet = new HashSet<>();
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Passenger other = (Passenger) obj;
+        return Objects.equals(id, other.getId());
+    }
 }

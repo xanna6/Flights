@@ -107,6 +107,29 @@ public class FlightService {
         return mapFlightToFlightDto(flight);
     }
 
+    public FlightDto deletePassengerFromFlight(Long flightId, Long passengerId) {
+        Optional<Passenger> optionalPassenger =  passengerRepository.findById(passengerId);
+        Optional<Flight> optionalFlight =  flightRepository.findById(flightId);
+
+        if (optionalPassenger.isEmpty()) {
+            throw new PassengerNotFoundException("Passenger with id = " + passengerId + " not found");
+        }
+        if (optionalFlight.isEmpty()) {
+            throw new FlightNotFoundException("Flight with id = " + flightId + " not found");
+        }
+
+        Passenger passenger = optionalPassenger.get();
+        Flight flight = optionalFlight.get();
+
+        boolean removed = flight.getPassengerSet().remove(passenger);
+        System.out.println(removed);
+        if (removed) {
+            flight.setAvailableSeats(flight.getAvailableSeats() + 1);
+            flight = flightRepository.save(flight);
+        }
+        return mapFlightToFlightDto(flight);
+    }
+
     private FlightDto mapFlightToFlightDto(Flight flight) {
         return FlightDto.builder()
                 .id(flight.getId())

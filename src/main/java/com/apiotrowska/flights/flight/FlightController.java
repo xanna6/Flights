@@ -59,4 +59,10 @@ public class FlightController {
         FlightDto flight = this.flightService.assignPassengerToFlight(flightId, passengerId);
         return new ResponseEntity<>(flight, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{flightId}/passenger/{passengerId}")
+    public ResponseEntity<FlightDto> deletePassengerFromFlight(@PathVariable Long flightId, @PathVariable Long passengerId) {
+        FlightDto flight = this.flightService.deletePassengerFromFlight(flightId, passengerId);
+        return new ResponseEntity<>(flight, HttpStatus.OK);
+    }
 }

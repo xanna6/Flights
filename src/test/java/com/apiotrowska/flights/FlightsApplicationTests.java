@@ -491,4 +491,54 @@ class FlightsApplicationTests {
         assertNotEquals(assignPassengerToFlightResponse.getAvailableSeats(), flightResponse.getAvailableSeats());
         assertThat(assignPassengerToFlightResponse.getAvailableSeats()).isEqualTo(99);
     }
+
+    @Test
+    public void shouldDeletePassengerFromFlight() throws Exception {
+        // given
+        String flightRequest = "{\"flightNumber\":\"LO111\",\"departureAirport\":\"Warsaw (WAW)\"," +
+                "\"arrivalAirport\":\"Cracow (KRK)\",\"departureDate\":\"2024-04-24\",\"departureTime\":\"10:25\"," +
+                "\"allSeats\":100}";
+
+        String flightJson = mockMvc.perform(post("/flight").content(flightRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        FlightDto flightResponse = objectMapper.readValue(flightJson, FlightDto.class);
+        Long flightId = flightResponse.getId();
+
+        String passengerRequest = "{\"firstname\":\"John\",\"lastname\":\"Smith\"," +
+                "\"phoneNumber\":\"123456789\",\"email\":\"johnsmith@mail.com\"}";
+
+        String passengerJson = mockMvc.perform(post("/passenger").content(passengerRequest)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        PassengerDto passengerResponse = objectMapper.readValue(passengerJson, PassengerDto.class);
+        Long passengerId = passengerResponse.getId();
+
+        String assignPassengerToFlightJson = mockMvc.perform(put("/flight/" + flightId + "/passenger/" + passengerId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        FlightDto assignPassengerToFlightResponse = objectMapper.readValue(assignPassengerToFlightJson, FlightDto.class);
+
+        // when
+        String deletePassengerFromFlightJson = mockMvc.perform(delete("/flight/" + flightId + "/passenger/" + passengerId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //then
+        FlightDto deletePassengerFromFlightResponse = objectMapper.readValue(deletePassengerFromFlightJson, FlightDto.class);
+
+        assertNotEquals(deletePassengerFromFlightResponse.getAvailableSeats(), assignPassengerToFlightResponse.getAvailableSeats());
+        assertThat(deletePassengerFromFlightResponse.getAvailableSeats()).isEqualTo(100);
+    }
 }
